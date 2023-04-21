@@ -27,11 +27,11 @@ def main():
         print("No command specified")
         print_usage()
 
-        def move(values):
+def move(values):
     global current_pos
     if len(values) != 4:
-        print("Invalid number of arguments")
-        print_usage()
+            print("Invalid number of arguments")
+            print_usage()
     else:
         try:
             values = [int(v) for v in values]
@@ -45,6 +45,7 @@ def main():
 def show():
     print(f"Current position: {current_pos}")
     check_greetings()
+
 def save(filename):
     with open(filename, "w") as f:
         data = {"current_pos": current_pos}
