@@ -41,3 +41,20 @@ def main():
         except ValueError:
             print("Invalid argument type")
             print_usage()
+            
+def show():
+    print(f"Current position: {current_pos}")
+    check_greetings()
+def save(filename):
+    with open(filename, "w") as f:
+        data = {"current_pos": current_pos}
+        json.dump(data, f)
+    print(f"Saved to {filename}")
+
+def load(filename):
+    with open(filename, "r") as f:
+        data = json.load(f)
+        global current_pos
+        current_pos = data["current_pos"]
+    print(f"Loaded from {filename}")
+    show()
