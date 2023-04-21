@@ -26,3 +26,18 @@ def main():
     else:
         print("No command specified")
         print_usage()
+
+        def move(values):
+    global current_pos
+    if len(values) != 4:
+        print("Invalid number of arguments")
+        print_usage()
+    else:
+        try:
+            values = [int(v) for v in values]
+            current_pos = [current_pos[i] + values[i] for i in range(4)]
+            print(f"New position: {current_pos}")
+            check_greetings()
+        except ValueError:
+            print("Invalid argument type")
+            print_usage()
