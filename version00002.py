@@ -1,61 +1,64 @@
 import sys
+import os
 import json
 
-# Global variables
-current_pos = [0, 0, 0, 0]
-greetings = {
-    (0, 0, 0, 0): "Welcome to the origin!",
-    (2, 2, 2, 2): "Congratulations, you found the secret location!"
-}
+class CoordinateSystem:
+    def __init__(self, position=(0, 0, 0, 0), greetings=None):
+        self.position = list(position)
+        self.greetings = greetings or {
+            (0, 0, 0, 0): "Welcome to the origin!",
+            (2, 2, 2, 2): "Hello from the special coordinate!",
+        }
+
+    def move(self, direction, value):
+        self.position[direction] += value
+
+        coord = tuple(self.position)
+        if coord in self.greetings:
+            print(self.greetings[coord])
+
+    def save(self, filepath):
+        with open(filepath, "w") as file:
+            json.dump({"position": self.position, "greetings": self.greetings}, file)
+
+    def load(self, filepath):
+        with open(filepath, "r") as file:
+            data = json.load(file)
+
+        self.position = data["position"]
+        self.greetings = data["greetings"]
 
 def main():
-    # Check for command-line arguments
-    if len(sys.argv) > 1:
-        command = sys.argv[1]
+    coord_sys = CoordinateSystem()
+
+    while True:
+        command = input("Enter a command (move/save/load/exit): ")
+
         if command == "move":
-            move(sys.argv[2:])
-        elif command == "show":
-            show()
+            direction = int(input("Enter the direction (0/1/2/3): "))
+            value = int(input("Enter the value to move: "))
+            coord_sys.move(direction, value)
+            print("Current position:", coord_sys.position)
+
         elif command == "save":
-            save(sys.argv[2])
+            filepath = input("Enter the file path to save: ")
+            coord_sys.save(filepath)
+            print("Saved position and greetings.")
+
         elif command == "load":
-            load(sys.argv[2])
+            filepath = input("Enter the file path to load: ")
+            if os.path.exists(filepath):
+                coord_sys.load(filepath)
+                print("Loaded position and greetings.")
+            else:
+                print("File not found.")
+
+        elif command == "exit":
+            print("Exiting the program.")
+            sys.exit()
+
         else:
-            print("Invalid command")
-            print_usage()
-    else:
-        print("No command specified")
-        print_usage()
+            print("Invalid command. Please try again.")
 
-def move(values):
-    global current_pos
-    if len(values) != 4:
-            print("Invalid number of arguments")
-            print_usage()
-    else:
-        try:
-            values = [int(v) for v in values]
-            current_pos = [current_pos[i] + values[i] for i in range(4)]
-            print(f"New position: {current_pos}")
-            check_greetings()
-        except ValueError:
-            print("Invalid argument type")
-            print_usage()
-            
-def show():
-    print(f"Current position: {current_pos}")
-    check_greetings()
-
-def save(filename):
-    with open(filename, "w") as f:
-        data = {"current_pos": current_pos}
-        json.dump(data, f)
-    print(f"Saved to {filename}")
-
-def load(filename):
-    with open(filename, "r") as f:
-        data = json.load(f)
-        global current_pos
-        current_pos = data["current_pos"]
-    print(f"Loaded from {filename}")
-    show()
+if __name__ == "__main__":
+    main()
